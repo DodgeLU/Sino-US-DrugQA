@@ -1,39 +1,40 @@
 # Sino-US-DrugQA
 
-Sino-US-DrugQA 是一个中英双语基准数据集，用于评估大语言模型在
-中美药品监管（US FDA vs China NMPA）跨法域比较任务中的表现。
-数据集为多项选择题形式，覆盖单一法域检索与跨法域比较两类能力。
+Sino-US-DrugQA is a bilingual benchmark for evaluating large language models on
+cross-jurisdictional pharmaceutical regulation (US FDA vs China NMPA). It is a
+multiple-choice QA dataset with monolingual retrieval, cross-jurisdictional
+comparison, and parallel consistency tasks.
 
-## 概要
+## Highlights
 
-- 11,871 题，双语（EN/ZH）
-- 任务类型占比：Monolingual 59.1%、Comparative 36.3%、Parallel 4.6%
-- 来源：134 部 NMPA 法规 + 195 份 CFR Title 21 文档
-- 评测模型：DeepSeek-V3.2、GPT-5.2、Qwen-3-235B、Gemini-3-flash
+- 11,871 QA pairs, bilingual (EN/ZH)
+- Task types: Monolingual (59.1%), Comparative (36.3%), Parallel (4.6%)
+- Sources: 134 NMPA regulations + 195 CFR Title 21 documents
+- Models: DeepSeek-V3.2, GPT-5.2, Qwen-3-235B, Gemini-3-flash
 
-## 关键统计（论文数据）
+## Dataset Statistics (from paper)
 
-### 语言分布
+### Language
 
-- 英文：6,069（51.1%）
-- 中文：5,802（48.9%）
+- English: 6,069 (51.1%)
+- Chinese: 5,802 (48.9%)
 
-### 领域分布（Top 5）
+### Domain (Top 5)
 
-- Drugs：4,752（40.0%）
-- Medical Devices：2,772（23.4%）
-- Cosmetics：1,699（14.3%）
-- General_FDA：1,465（12.3%）
-- Controlled_Substances：845（7.1%）
+- Drugs: 4,752 (40.0%)
+- Medical Devices: 2,772 (23.4%)
+- Cosmetics: 1,699 (14.3%)
+- General_FDA: 1,465 (12.3%)
+- Controlled_Substances: 845 (7.1%)
 
-### Zero-shot 总体准确率
+### Zero-shot Accuracy (Overall)
 
-- Gemini-3-flash：84.51%
-- DeepSeek-V3.2：80.53%
-- Qwen-3-235B：80.04%
-- GPT-5.2：78.97%
+- Gemini-3-flash: 84.51%
+- DeepSeek-V3.2: 80.53%
+- Qwen-3-235B: 80.04%
+- GPT-5.2: 78.97%
 
-## 仓库结构
+## Repository Structure
 
 ```
 github/
@@ -56,9 +57,9 @@ github/
 └── LICENSE
 ```
 
-## 数据格式
+## Dataset Format
 
-`data/*.jsonl` 每行是一个 JSON 对象：
+Each line in `data/*.jsonl` is a JSON object:
 
 ```json
 {
@@ -75,14 +76,14 @@ github/
 }
 ```
 
-完整字段说明见 `DATASET_CARD.md` 和 `data/README.md`。
+See `DATASET_CARD.md` and `data/README.md` for full field descriptions.
 
-## 数据划分
+## Data Splits
 
-- `data/0-shot/`：全量数据与按类型拆分后的 JSONL
-- `data/5-shot/`：按类型划分 dev/test（每类 dev 取 5 条）
+- `data/0-shot/`: full dataset and type-specific JSONL files
+- `data/5-shot/`: per-type dev/test split (5 examples per type in dev)
 
-## 提示词模板（Zero-shot）
+## Prompt Template (Zero-shot)
 
 ```text
 ### System Prompt
@@ -110,7 +111,7 @@ Output your response in strict JSON format.
 }
 ```
 
-## 评测
+## Evaluation
 
 ```bash
 ./scripts/run_deepseek.sh
@@ -119,30 +120,30 @@ Output your response in strict JSON format.
 ./scripts/run_qwen.sh
 ```
 
-脚本调用官方源站 API，并接受 `SHOT=0|5` 参数：
+Each script targets the official provider endpoint and accepts `SHOT=0|5`:
 
 ```bash
 SHOT=5 ./scripts/run_deepseek.sh
 ```
 
-模型名称与论文保持一致：
+Model names follow the paper:
 
 - DeepSeek-V3.2
 - GPT-5.2
 - Qwen-3-235B
 - Gemini-3-flash
 
-## 数据来源
+## Data Availability
 
-原始法规来源于公开官方渠道：
+The benchmark is derived from publicly available regulations:
 
 - NMPA: https://www.nmpa.gov.cn
 - eCFR Title 21: https://www.ecfr.gov
 
-## 许可协议
+## License
 
-本数据集采用 CC BY 4.0 协议，详见 `LICENSE`。
+This dataset is released under CC BY 4.0. See `LICENSE`.
 
-## 引用
+## Citation
 
-见 `CITATION.bib`。
+See `CITATION.bib`.

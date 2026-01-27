@@ -41,7 +41,6 @@ github/
 ├── data/
 │   ├── 0-shot/
 │   ├── 5-shot/
-│   └── README.md
 ├── evaluation/
 │   ├── deepseek_eval.py
 │   ├── gpt_eval.py

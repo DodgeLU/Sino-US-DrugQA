@@ -1,78 +1,63 @@
 # Sino-US-DrugQA
 
 **Sino-US-DrugQA** 是一个中英双语基准数据集，用于评估大语言模型在
-**跨法域药品监管推理**中的能力，重点关注 **US FDA** 与 **China NMPA**
+**跨法域药品监管推理**中的能力，重点关注 **U.S. FDA** 与 **China NMPA**
 监管体系的比较理解与对齐。
 
-与传统法律或医学基准不同，Sino-US-DrugQA 聚焦 **行政监管合规任务**，
-要求模型在 **非等价监管体系**中进行对齐、比较与推断。
+本数据集不仅评估单一法域的监管检索能力，还覆盖**明确的跨法域比较**
+场景，要求模型在非等价监管体系之间进行概念级别对齐与推理。
 
 ---
 
-## 🔍 本基准评测什么
+## Quick Facts
 
-Sino-US-DrugQA 用于评估模型是否能够：
-
-- 在单一法域内检索监管要求
-- 跨法域进行比较（如时限、阈值、流程义务）
-- 保持概念级别对齐（FDA vs. NMPA）
-- 避免幻觉或过度泛化的合规结论
-
-该基准仅用于**评测与研究**，不用于自动化合规决策。
-
----
-
-## 📊 数据集概览
-
-- **总题量**：11,871 道多选题
-- **语言**：英文 51.1%，中文 48.9%
-- **法域**：US FDA（CFR Title 21）与中国 NMPA
-- **任务类型**：
-  - Monolingual：59.1%
-  - Comparative：36.3%
-  - Parallel：4.6%
-- **来源文档**：
-  - 134 部 NMPA 法规
-  - 195 份 CFR Title 21 文档
+- **领域**：药品监管（FDA vs NMPA）
+- **任务形式**：多项选择题（MCQA）
+- **任务类型**：Monolingual · Comparative · Parallel
+- **语言**：English / Chinese
+- **规模**：11,871 题
+- **许可证**：CC BY 4.0
+- **论文**：*Sino-US-DrugQA: A Benchmark for Evaluating Large Language Models in Cross-Jurisdictional Pharmaceutical Regulation*
 
 ---
 
-## 🧠 任务类型
+## 数据集概览
 
-| 类型 | 描述 |
-| --- | --- |
-| Monolingual | 单一法域内的监管检索 |
-| Comparative | 明确要求跨法域比较 |
-| Parallel | 以等价问题测试一致性 |
+### 关键统计
 
----
+- **总题量**：11,871
+- **任务分布**：
+  - Monolingual QA：7,013（59.1%）
+  - Comparative QA：4,310（36.3%）
+  - Parallel QA：548（4.6%）
+- **语言分布**：
+  - English：6,069（51.1%）
+  - Chinese：5,802（48.9%）
 
-## 🏷 监管领域（Top 5）
+### 监管领域分布（Top 5）
 
-| 领域 | 占比 |
-| --- | --- |
-| Drugs | 40.0% |
-| Medical Devices | 23.4% |
-| Cosmetics | 14.3% |
-| General FDA / Administrative | 12.3% |
-| Controlled Substances | 7.1% |
-
----
-
-## 🤖 Zero-shot 基线模型（总体准确率）
-
-| 模型 | 准确率 |
-| --- | --- |
-| Gemini-3-flash | 84.51% |
-| DeepSeek-V3.2 | 80.53% |
-| Qwen-3-235B | 80.04% |
-| GPT-5.2 | 78.97% |
-
-所有评测均使用**统一 Zero-shot 与 Five-shot 协议**，温度设置为 0。
+- Drugs：4,752（40.0%）
+- Medical Devices：2,772（23.4%）
+- Cosmetics：1,699（14.3%）
+- General FDA：1,465（12.3%）
+- Controlled Substances：845（7.1%）
 
 ---
 
-## 📁 仓库结构
+## 任务定义
+
+- **Monolingual QA**  
+  单一法域内的监管检索与理解（FDA 或 NMPA）。
+
+- **Comparative QA**  
+  跨法域显式比较（如时限、阈值、流程义务）。
+
+- **Parallel QA**  
+  中英文结构对齐问题，用于一致性评测。
+
+---
+
+## 仓库结构
 
 ```
 github/
@@ -95,7 +80,7 @@ github/
 └── LICENSE
 ```
 
-## 🧾 数据格式
+## 数据格式
 
 `data/*.jsonl` 每行对应一个样本：
 
@@ -114,18 +99,30 @@ github/
 }
 ```
 
+### 字段定义
+
+- `id`：唯一题目编号
+- `question`：题干
+- `choices`：四个选项（A–D）
+- `answer`：正确答案标签
+- `type`：{Monolingual, Comparative, Parallel}
+- `category`：监管领域
+- `lang`：{EN, CN}
+- `explanation`：依据法规文本的解释
+- `source_cn` / `source_us`：来源法规（如适用）
+
 完整字段说明见 `DATASET_CARD.md`。
 
 ---
 
-## 📦 数据划分
+## 数据划分
 
 - `data/0-shot/`：全量数据与按类型拆分后的 JSONL
 - `data/5-shot/`：按类型划分 dev/test（每类 dev 取 5 条）
 
 ---
 
-## 📌 提示词模板（Zero-shot）
+## 提示词模板（Zero-shot）
 
 ```text
 ### System Prompt
@@ -155,7 +152,7 @@ Output your response in strict JSON format.
 
 ---
 
-## 🧪 评测
+## 评测
 
 ```bash
 ./scripts/run_deepseek.sh
@@ -170,7 +167,7 @@ Output your response in strict JSON format.
 SHOT=5 ./scripts/run_deepseek.sh
 ```
 
-模型名称与论文保持一致：
+论文中评测的模型：
 
 - DeepSeek-V3.2
 - GPT-5.2
@@ -179,7 +176,20 @@ SHOT=5 ./scripts/run_deepseek.sh
 
 ---
 
-## 📜 数据来源
+## 使用范围
+
+Sino-US-DrugQA 用于**监管智能评测与研究**，尤其包括：
+
+- 跨法域监管推理
+- 双语监管理解（EN/ZH）
+- 非等价法域的概念对齐
+- 幻觉与误配错误分析
+
+⚠️ 输出**不应**用于自动化合规决策，任何真实合规结论必须由专家审查。
+
+---
+
+## 数据来源
 
 原始法规来自公开官方渠道：
 
@@ -188,27 +198,16 @@ SHOT=5 ./scripts/run_deepseek.sh
 
 ---
 
-## ⚠️ 使用范围与免责声明
-
-本数据集用于：
-
-- 监管推理基准评测
-- 跨法域对齐研究
-- 误差分析与鲁棒性研究
-
-不用于：
-
-- 自动化合规决策
-- 无专家审查的法律或合规建议
+为尊重原始法规权威性与时效性，原文法规不在本仓库重复发布。
 
 ---
 
-## 📄 许可协议
+## 许可协议
 
 本数据集采用 CC BY 4.0 协议，详见 `LICENSE`。
 
 ---
 
-## 📚 引用
+## 引用
 
 见 `CITATION.bib`。

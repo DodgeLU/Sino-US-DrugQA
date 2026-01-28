@@ -1,83 +1,60 @@
 # Sino-US-DrugQA
 
-**Sino-US-DrugQA** is a bilingual (Chinese–English) benchmark dataset designed
-to evaluate large language models (LLMs) on **cross-jurisdictional pharmaceutical
-regulatory reasoning**, with a focus on comparative analysis between **US FDA**
-and **China NMPA** regulatory frameworks.
+**Sino-US-DrugQA** is a bilingual benchmark dataset for evaluating large language models (LLMs) on **cross-jurisdictional pharmaceutical regulation**, with a focus on comparative reasoning between **U.S. FDA** and **China NMPA** regulatory frameworks.
 
-Unlike existing legal or medical benchmarks that focus on monolingual statutory
-interpretation or clinical reasoning, Sino-US-DrugQA targets **administrative
-regulatory compliance tasks**, requiring models to align and compare
-**non-equivalent regulatory systems**.
+The dataset is designed to assess not only monolingual regulatory retrieval, but also **explicit cross-jurisdictional comparison**, a setting that requires concept-level alignment across non-equivalent administrative and legal systems.
 
 ---
 
-## 🔍 What This Benchmark Evaluates
+## Quick Facts
 
-Sino-US-DrugQA evaluates whether LLMs can:
-
-- Retrieve regulatory requirements within a single jurisdiction
-- Perform cross-jurisdictional comparison (e.g., timelines, thresholds, obligations)
-- Maintain concept-level alignment across FDA and NMPA systems
-- Avoid hallucinated or over-generalized compliance conclusions
-
-This benchmark is intended **for evaluation and research purposes only**, not
-for automated regulatory decision-making.
+- **Domain**: Pharmaceutical regulation (FDA vs NMPA)
+- **Task Format**: Multiple-choice question answering (MCQA)
+- **Task Types**: Monolingual · Comparative · Parallel
+- **Languages**: English / Chinese
+- **Size**: 11,871 questions
+- **License**: CC BY 4.0
+- **Paper**: *Sino-US-DrugQA: A Benchmark for Evaluating Large Language Models in Cross-Jurisdictional Pharmaceutical Regulation*
 
 ---
 
-## 📊 Dataset Overview
+## Dataset Overview
 
-- **Total questions**: 11,871 multiple-choice QA pairs
-- **Languages**: English 51.1%, Chinese 48.9%
-- **Jurisdictions**: US FDA (CFR Title 21), China NMPA
-- **Task types**:
-  - Monolingual: 59.1%
-  - Comparative: 36.3%
-  - Parallel: 4.6%
-- **Source documents**:
-  - 134 NMPA regulations
-  - 195 CFR Title 21 documents
+### Key Statistics
 
----
+- **Total QA pairs**: 11,871
+- **Task distribution**:
+  - Monolingual QA: 7,013 (59.1%)
+  - Comparative QA: 4,310 (36.3%)
+  - Parallel QA: 548 (4.6%)
+- **Language distribution**:
+  - English: 6,069 (51.1%)
+  - Chinese: 5,802 (48.9%)
 
-## 🧠 Task Types
+### Regulatory Domain Coverage (Top 5)
 
-| Task Type | Description |
-| --- | --- |
-| Monolingual | Regulatory retrieval within a single jurisdiction |
-| Comparative | Explicit comparison across FDA and NMPA requirements |
-| Parallel | Equivalent questions for consistency checks |
+- Drugs: 4,752 (40.0%)
+- Medical Devices: 2,772 (23.4%)
+- Cosmetics: 1,699 (14.3%)
+- General FDA: 1,465 (12.3%)
+- Controlled Substances: 845 (7.1%)
 
 ---
 
-## 🏷 Regulatory Domains (Top 5)
+## Task Definitions
 
-| Domain | Percentage |
-| --- | --- |
-| Drugs | 40.0% |
-| Medical Devices | 23.4% |
-| Cosmetics | 14.3% |
-| General FDA / Administrative | 12.3% |
-| Controlled Substances | 7.1% |
+- **Monolingual QA**  
+  Retrieval and interpretation of regulatory requirements within a single jurisdiction (FDA *or* NMPA).
 
----
+- **Comparative QA**  
+  Explicit comparison of regulatory requirements across jurisdictions (e.g., timelines, thresholds, procedural obligations).
 
-## 🤖 Baseline Models Evaluated (Zero-shot)
-
-| Model | Accuracy |
-| --- | --- |
-| Gemini-3-flash | 84.51% |
-| DeepSeek-V3.2 | 80.53% |
-| Qwen-3-235B | 80.04% |
-| GPT-5.2 | 78.97% |
-
-All evaluations use a standardized zero-shot and five-shot protocol with
-temperature set to 0.
+- **Parallel QA**  
+  Structurally aligned questions asked independently in English and Chinese to assess bilingual consistency.
 
 ---
 
-## 📁 Repository Structure
+## Repository Structure
 
 ```
 github/
@@ -100,9 +77,11 @@ github/
 └── LICENSE
 ```
 
-## 🧾 Data Format
+---
 
-Each line in `data/*.jsonl` corresponds to one QA instance:
+## Data Format
+
+Each instance is stored as one line in a JSONL file:
 
 ```json
 {
@@ -119,18 +98,33 @@ Each line in `data/*.jsonl` corresponds to one QA instance:
 }
 ```
 
-See `DATASET_CARD.md` for full field descriptions.
+### Field Definitions
+
+- `id`: unique question identifier
+- `question`: question text
+- `choices`: four answer options (A-D)
+- `answer`: correct option label
+- `type`: one of `{Monolingual, Comparative, Parallel}`
+- `category`: regulatory domain
+- `lang`: one of `{EN, CN}`
+- `explanation`: rationale grounded in regulatory text
+- `source_cn` / `source_us`: regulatory source references (when applicable)
+
+See `DATASET_CARD.md` for full details.
 
 ---
 
-## 📦 Data Splits
+## Data Splits
 
-- `data/0-shot/`: full dataset and type-specific JSONL files
-- `data/5-shot/`: per-type dev/test split (5 examples per type in dev)
+- `data/0-shot/`  
+  Full dataset and type-specific JSONL files used for zero-shot evaluation.
+
+- `data/5-shot/`  
+  Dev/test splits for few-shot evaluation (5 examples per task type in dev).
 
 ---
 
-## 📌 Prompt Template (Zero-shot)
+## Prompt Template (Zero-shot)
 
 ```text
 ### System Prompt
@@ -160,7 +154,9 @@ Output your response in strict JSON format.
 
 ---
 
-## 🧪 Evaluation
+## Evaluation
+
+Run baseline evaluations using the provided scripts:
 
 ```bash
 ./scripts/run_deepseek.sh
@@ -169,13 +165,13 @@ Output your response in strict JSON format.
 ./scripts/run_qwen.sh
 ```
 
-Each script targets the official provider endpoint and accepts `SHOT=0|5`:
+Few-shot evaluation can be enabled via:
 
 ```bash
 SHOT=5 ./scripts/run_deepseek.sh
 ```
 
-Model names follow the paper:
+Models evaluated in the accompanying paper:
 
 - DeepSeek-V3.2
 - GPT-5.2
@@ -184,36 +180,40 @@ Model names follow the paper:
 
 ---
 
-## 📜 Data Sources
+## Intended Use
 
-Regulatory texts are obtained from official public sources:
+Sino-US-DrugQA is intended for **research and benchmarking** of LLMs in regulatory intelligence, particularly for evaluating:
+
+- Cross-jurisdictional regulatory reasoning
+- Bilingual regulatory comprehension (EN/ZH)
+- Concept-level alignment across non-isomorphic legal systems
+- Regulatory hallucination and misalignment errors
+
+Outputs should **not** be used as standalone regulatory advice.
+All real-world compliance decisions must remain subject to expert review.
+
+---
+
+## Source Documents
+
+Original regulatory texts are publicly available from official portals:
 
 - NMPA: https://www.nmpa.gov.cn
-- eCFR Title 21: https://www.ecfr.gov
+- US FDA (eCFR Title 21): https://www.ecfr.gov
+
+To respect source authority and ensure regulatory currency, original regulatory documents are **not redistributed** in this repository.
 
 ---
 
-## ⚠️ Intended Use & Disclaimer
+## License
 
-This dataset is intended for:
-
-- Benchmarking LLM regulatory reasoning
-- Research on cross-jurisdictional AI alignment
-- Error analysis and robustness studies
-
-It is **NOT** intended for:
-
-- Automated regulatory decision-making
-- Legal or compliance advice without expert review
+This dataset is released under the **Creative Commons Attribution 4.0 (CC BY 4.0)** license.
+See `LICENSE` for details.
 
 ---
 
-## 📄 License
+## Citation
 
-This dataset is released under CC BY 4.0. See `LICENSE`.
-
----
-
-## 📚 Citation
+If you use Sino-US-DrugQA in your research, please cite the accompanying paper:
 
 See `CITATION.bib`.

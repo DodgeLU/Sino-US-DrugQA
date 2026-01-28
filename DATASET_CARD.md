@@ -1,73 +1,135 @@
 # Dataset Card: Sino-US-DrugQA
 
-## Summary
+## Dataset Summary
 
-Sino-US-DrugQA is a bilingual benchmark for evaluating large language models on
-cross-jurisdictional pharmaceutical regulation. The dataset focuses on US FDA
-and China NMPA regulations and targets both monolingual retrieval and explicit
-cross-jurisdictional comparison tasks.
+Sino-US-DrugQA is a bilingual benchmark dataset designed to evaluate the ability of large language models (LLMs) to perform **cross-jurisdictional pharmaceutical regulatory reasoning**. The dataset focuses on regulatory frameworks administered by the **United States Food and Drug Administration (FDA)** and **China’s National Medical Products Administration (NMPA)**.
+
+Unlike existing legal or medical benchmarks that primarily target monolingual statutory interpretation or clinical decision-making, Sino-US-DrugQA emphasizes **administrative regulatory compliance** and **explicit comparison across non-equivalent legal systems**, such as differences in procedural timelines, approval requirements, and documentation obligations.
+
+The dataset is intended for **evaluation and benchmarking purposes only** and does not constitute legal or regulatory advice.
+
+---
 
 ## Languages
 
 - English (EN)
 - Chinese (ZH)
 
+---
+
 ## Task Types
 
-- Monolingual QA: retrieve facts within one jurisdiction.
-- Comparative QA: compare requirements across US vs China.
-- Parallel QA: aligned questions in both languages for consistency checks.
+Sino-US-DrugQA includes three task types reflecting different regulatory reasoning demands:
 
-## Size and Splits
+- **Monolingual QA**  
+  Retrieval and interpretation of regulatory requirements within a single jurisdiction (FDA or NMPA).
 
-- Total: 11,871 QA pairs
-- Monolingual: 7,013 (59.1%)
-- Comparative: 4,310 (36.3%)
-- Parallel: 548 (4.6%)
+- **Comparative QA**  
+  Explicit comparison of regulatory requirements across jurisdictions, requiring concept-level alignment (e.g., identifying which jurisdiction has stricter timelines or additional procedural steps).
+
+- **Parallel QA**  
+  Aligned questions asked separately for FDA and NMPA to evaluate cross-lingual and cross-jurisdictional consistency.
+
+---
+
+## Dataset Size and Composition
+
+- **Total QA pairs**: 11,871
+
+### Task Distribution
+
+- Monolingual QA: 7,013 (59.1%)
+- Comparative QA: 4,310 (36.3%)
+- Parallel QA: 548 (4.6%)
+
+### Language Distribution
+
 - English: 6,069 (51.1%)
 - Chinese: 5,802 (48.9%)
 
-Splits used in this repo:
+---
 
-- `data/0-shot/`: full dataset and type-specific JSONL files
-- `data/5-shot/`: dev/test split per type (5 examples per type in dev)
+## Data Splits
 
-## Fields
+The repository provides evaluation-oriented splits:
 
-- `id`: unique question identifier
-- `question`: question text
-- `choices`: 4 options (A/B/C/D)
-- `answer`: correct option label (A/B/C/D)
-- `type`: Monolingual | Comparative | Parallel
-- `category`: regulatory domain (e.g., Drugs, Medical_Devices, GMP)
-- `lang`: EN | CN
-- `explanation`: rationale for the answer
-- `source_cn` / `source_us`: source document references (when applicable)
+- `data/0-shot/`  
+  Full dataset and task-type–specific JSONL files for zero-shot evaluation.
+
+- `data/5-shot/`  
+  Development and test splits per task type, where the development set contains **5 examples per task type**, used exclusively for in-context learning in few-shot evaluation.
+
+No training split is provided, as the dataset is designed for **benchmarking rather than model training**.
+
+---
+
+## Data Fields
+
+Each instance is stored as a single JSON object with the following fields:
+
+- `id`: Unique question identifier
+- `question`: Question text
+- `choices`: List of four answer options (A/B/C/D)
+- `answer`: Correct option label (A/B/C/D)
+- `type`: Task type (`Monolingual`, `Comparative`, or `Parallel`)
+- `category`: Regulatory domain (e.g., `Drugs`, `Medical_Devices`, `GMP`)
+- `lang`: Language of the question (`EN` or `CN`)
+- `explanation`: Brief rationale for the correct answer (not used for scoring)
+- `source_cn`: Reference to the originating NMPA regulatory provision (when applicable)
+- `source_us`: Reference to the originating US CFR provision (when applicable)
+
+The `source_cn` and `source_us` fields enable **traceability** to authoritative regulatory texts.
+
+---
 
 ## Source Data
 
-- 134 key NMPA regulations
-- 195 documents from US CFR Title 21
+The dataset was constructed from publicly available regulatory documents, including:
+
+- **134 key NMPA regulations**
+- **195 documents from the US Code of Federal Regulations (CFR), Title 21**
+
+Original regulatory texts are available from official sources:
+
+- NMPA: https://www.nmpa.gov.cn  
+- US eCFR (Title 21): https://www.ecfr.gov  
+
+The dataset reflects regulatory versions effective as of **December 2025**.
+
+---
 
 ## Domain Coverage (Top 5)
 
 - Drugs: 4,752 (40.0%)
 - Medical Devices: 2,772 (23.4%)
 - Cosmetics: 1,699 (14.3%)
-- General_FDA: 1,465 (12.3%)
+- General FDA / Administrative: 1,465 (12.3%)
 - Controlled Substances: 845 (7.1%)
 
-Original regulations are publicly available from official portals:
-
-- https://www.nmpa.gov.cn
-- https://www.ecfr.gov
+---
 
 ## Intended Use
 
-Research and benchmarking of LLMs for regulatory intelligence, with emphasis
-on cross-jurisdictional comparison. Outputs should be reviewed by experts for
-any real-world compliance use.
+This dataset is intended for:
+
+- Benchmarking LLM performance on pharmaceutical regulatory reasoning
+- Research on cross-jurisdictional AI alignment and robustness
+- Error analysis in high-stakes regulatory question answering
+
+Any outputs generated using this dataset **must be reviewed by qualified regulatory professionals** before being used in real-world compliance or decision-making contexts.
+
+---
+
+## Out-of-Scope Use
+
+The dataset is **not intended** for:
+
+- Automated regulatory decision-making
+- Legal or compliance advice without expert oversight
+- Training production-grade regulatory AI systems without additional validation
+
+---
 
 ## License
 
-CC BY 4.0
+Sino-US-DrugQA is released under the **Creative Commons Attribution 4.0 International (CC BY 4.0)** license.

@@ -1,40 +1,83 @@
 # Sino-US-DrugQA
 
-Sino-US-DrugQA is a bilingual benchmark for evaluating large language models on
-cross-jurisdictional pharmaceutical regulation (US FDA vs China NMPA). It is a
-multiple-choice QA dataset with monolingual retrieval, cross-jurisdictional
-comparison, and parallel consistency tasks.
+**Sino-US-DrugQA** is a bilingual (Chinese–English) benchmark dataset designed
+to evaluate large language models (LLMs) on **cross-jurisdictional pharmaceutical
+regulatory reasoning**, with a focus on comparative analysis between **US FDA**
+and **China NMPA** regulatory frameworks.
 
-## Highlights
+Unlike existing legal or medical benchmarks that focus on monolingual statutory
+interpretation or clinical reasoning, Sino-US-DrugQA targets **administrative
+regulatory compliance tasks**, requiring models to align and compare
+**non-equivalent regulatory systems**.
 
-- 11,871 QA pairs, bilingual (EN/ZH)
-- Task types: Monolingual (59.1%), Comparative (36.3%), Parallel (4.6%)
-- Sources: 134 NMPA regulations + 195 CFR Title 21 documents
-- Models: DeepSeek-V3.2, GPT-5.2, Qwen-3-235B, Gemini-3-flash
+---
 
-## Dataset Statistics (from paper)
+## 🔍 What This Benchmark Evaluates
 
-### Language
+Sino-US-DrugQA evaluates whether LLMs can:
 
-- English: 6,069 (51.1%)
-- Chinese: 5,802 (48.9%)
+- Retrieve regulatory requirements within a single jurisdiction
+- Perform cross-jurisdictional comparison (e.g., timelines, thresholds, obligations)
+- Maintain concept-level alignment across FDA and NMPA systems
+- Avoid hallucinated or over-generalized compliance conclusions
 
-### Domain (Top 5)
+This benchmark is intended **for evaluation and research purposes only**, not
+for automated regulatory decision-making.
 
-- Drugs: 4,752 (40.0%)
-- Medical Devices: 2,772 (23.4%)
-- Cosmetics: 1,699 (14.3%)
-- General_FDA: 1,465 (12.3%)
-- Controlled_Substances: 845 (7.1%)
+---
 
-### Zero-shot Accuracy (Overall)
+## 📊 Dataset Overview
 
-- Gemini-3-flash: 84.51%
-- DeepSeek-V3.2: 80.53%
-- Qwen-3-235B: 80.04%
-- GPT-5.2: 78.97%
+- **Total questions**: 11,871 multiple-choice QA pairs
+- **Languages**: English 51.1%, Chinese 48.9%
+- **Jurisdictions**: US FDA (CFR Title 21), China NMPA
+- **Task types**:
+  - Monolingual: 59.1%
+  - Comparative: 36.3%
+  - Parallel: 4.6%
+- **Source documents**:
+  - 134 NMPA regulations
+  - 195 CFR Title 21 documents
 
-## Repository Structure
+---
+
+## 🧠 Task Types
+
+| Task Type | Description |
+| --- | --- |
+| Monolingual | Regulatory retrieval within a single jurisdiction |
+| Comparative | Explicit comparison across FDA and NMPA requirements |
+| Parallel | Equivalent questions for consistency checks |
+
+---
+
+## 🏷 Regulatory Domains (Top 5)
+
+| Domain | Percentage |
+| --- | --- |
+| Drugs | 40.0% |
+| Medical Devices | 23.4% |
+| Cosmetics | 14.3% |
+| General FDA / Administrative | 12.3% |
+| Controlled Substances | 7.1% |
+
+---
+
+## 🤖 Baseline Models Evaluated (Zero-shot)
+
+| Model | Accuracy |
+| --- | --- |
+| Gemini-3-flash | 84.51% |
+| DeepSeek-V3.2 | 80.53% |
+| Qwen-3-235B | 80.04% |
+| GPT-5.2 | 78.97% |
+
+All evaluations use a standardized zero-shot and five-shot protocol with
+temperature set to 0.
+
+---
+
+## 📁 Repository Structure
 
 ```
 github/
@@ -57,9 +100,9 @@ github/
 └── LICENSE
 ```
 
-## Dataset Format
+## 🧾 Data Format
 
-Each line in `data/*.jsonl` is a JSON object:
+Each line in `data/*.jsonl` corresponds to one QA instance:
 
 ```json
 {
@@ -76,14 +119,18 @@ Each line in `data/*.jsonl` is a JSON object:
 }
 ```
 
-See `DATASET_CARD.md` and `data/README.md` for full field descriptions.
+See `DATASET_CARD.md` for full field descriptions.
 
-## Data Splits
+---
+
+## 📦 Data Splits
 
 - `data/0-shot/`: full dataset and type-specific JSONL files
 - `data/5-shot/`: per-type dev/test split (5 examples per type in dev)
 
-## Prompt Template (Zero-shot)
+---
+
+## 📌 Prompt Template (Zero-shot)
 
 ```text
 ### System Prompt
@@ -111,7 +158,9 @@ Output your response in strict JSON format.
 }
 ```
 
-## Evaluation
+---
+
+## 🧪 Evaluation
 
 ```bash
 ./scripts/run_deepseek.sh
@@ -133,17 +182,38 @@ Model names follow the paper:
 - Qwen-3-235B
 - Gemini-3-flash
 
-## Data Availability
+---
 
-The benchmark is derived from publicly available regulations:
+## 📜 Data Sources
+
+Regulatory texts are obtained from official public sources:
 
 - NMPA: https://www.nmpa.gov.cn
 - eCFR Title 21: https://www.ecfr.gov
 
-## License
+---
+
+## ⚠️ Intended Use & Disclaimer
+
+This dataset is intended for:
+
+- Benchmarking LLM regulatory reasoning
+- Research on cross-jurisdictional AI alignment
+- Error analysis and robustness studies
+
+It is **NOT** intended for:
+
+- Automated regulatory decision-making
+- Legal or compliance advice without expert review
+
+---
+
+## 📄 License
 
 This dataset is released under CC BY 4.0. See `LICENSE`.
 
-## Citation
+---
+
+## 📚 Citation
 
 See `CITATION.bib`.

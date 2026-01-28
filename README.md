@@ -1,39 +1,78 @@
 # Sino-US-DrugQA
 
-Sino-US-DrugQA 是一个中英双语基准数据集，用于评估大语言模型在
-中美药品监管（US FDA vs China NMPA）跨法域比较任务中的表现。
-数据集为多项选择题形式，覆盖单一法域检索与跨法域比较两类能力。
+**Sino-US-DrugQA** 是一个中英双语基准数据集，用于评估大语言模型在
+**跨法域药品监管推理**中的能力，重点关注 **US FDA** 与 **China NMPA**
+监管体系的比较理解与对齐。
 
-## 概要
+与传统法律或医学基准不同，Sino-US-DrugQA 聚焦 **行政监管合规任务**，
+要求模型在 **非等价监管体系**中进行对齐、比较与推断。
 
-- 11,871 题，双语（EN/ZH）
-- 任务类型占比：Monolingual 59.1%、Comparative 36.3%、Parallel 4.6%
-- 来源：134 部 NMPA 法规 + 195 份 CFR Title 21 文档
-- 评测模型：DeepSeek-V3.2、GPT-5.2、Qwen-3-235B、Gemini-3-flash
+---
 
-## 关键统计（论文数据）
+## 🔍 本基准评测什么
 
-### 语言分布
+Sino-US-DrugQA 用于评估模型是否能够：
 
-- 英文：6,069（51.1%）
-- 中文：5,802（48.9%）
+- 在单一法域内检索监管要求
+- 跨法域进行比较（如时限、阈值、流程义务）
+- 保持概念级别对齐（FDA vs. NMPA）
+- 避免幻觉或过度泛化的合规结论
 
-### 领域分布（Top 5）
+该基准仅用于**评测与研究**，不用于自动化合规决策。
 
-- Drugs：4,752（40.0%）
-- Medical Devices：2,772（23.4%）
-- Cosmetics：1,699（14.3%）
-- General_FDA：1,465（12.3%）
-- Controlled_Substances：845（7.1%）
+---
 
-### Zero-shot 总体准确率
+## 📊 数据集概览
 
-- Gemini-3-flash：84.51%
-- DeepSeek-V3.2：80.53%
-- Qwen-3-235B：80.04%
-- GPT-5.2：78.97%
+- **总题量**：11,871 道多选题
+- **语言**：英文 51.1%，中文 48.9%
+- **法域**：US FDA（CFR Title 21）与中国 NMPA
+- **任务类型**：
+  - Monolingual：59.1%
+  - Comparative：36.3%
+  - Parallel：4.6%
+- **来源文档**：
+  - 134 部 NMPA 法规
+  - 195 份 CFR Title 21 文档
 
-## 仓库结构
+---
+
+## 🧠 任务类型
+
+| 类型 | 描述 |
+| --- | --- |
+| Monolingual | 单一法域内的监管检索 |
+| Comparative | 明确要求跨法域比较 |
+| Parallel | 以等价问题测试一致性 |
+
+---
+
+## 🏷 监管领域（Top 5）
+
+| 领域 | 占比 |
+| --- | --- |
+| Drugs | 40.0% |
+| Medical Devices | 23.4% |
+| Cosmetics | 14.3% |
+| General FDA / Administrative | 12.3% |
+| Controlled Substances | 7.1% |
+
+---
+
+## 🤖 Zero-shot 基线模型（总体准确率）
+
+| 模型 | 准确率 |
+| --- | --- |
+| Gemini-3-flash | 84.51% |
+| DeepSeek-V3.2 | 80.53% |
+| Qwen-3-235B | 80.04% |
+| GPT-5.2 | 78.97% |
+
+所有评测均使用**统一 Zero-shot 与 Five-shot 协议**，温度设置为 0。
+
+---
+
+## 📁 仓库结构
 
 ```
 github/
@@ -56,9 +95,9 @@ github/
 └── LICENSE
 ```
 
-## 数据格式
+## 🧾 数据格式
 
-`data/*.jsonl` 每行是一个 JSON 对象：
+`data/*.jsonl` 每行对应一个样本：
 
 ```json
 {
@@ -75,14 +114,18 @@ github/
 }
 ```
 
-完整字段说明见 `DATASET_CARD.md` 和 `data/README.md`。
+完整字段说明见 `DATASET_CARD.md`。
 
-## 数据划分
+---
+
+## 📦 数据划分
 
 - `data/0-shot/`：全量数据与按类型拆分后的 JSONL
 - `data/5-shot/`：按类型划分 dev/test（每类 dev 取 5 条）
 
-## 提示词模板（Zero-shot）
+---
+
+## 📌 提示词模板（Zero-shot）
 
 ```text
 ### System Prompt
@@ -110,7 +153,9 @@ Output your response in strict JSON format.
 }
 ```
 
-## 评测
+---
+
+## 🧪 评测
 
 ```bash
 ./scripts/run_deepseek.sh
@@ -132,17 +177,38 @@ SHOT=5 ./scripts/run_deepseek.sh
 - Qwen-3-235B
 - Gemini-3-flash
 
-## 数据来源
+---
 
-原始法规来源于公开官方渠道：
+## 📜 数据来源
+
+原始法规来自公开官方渠道：
 
 - NMPA: https://www.nmpa.gov.cn
 - eCFR Title 21: https://www.ecfr.gov
 
-## 许可协议
+---
+
+## ⚠️ 使用范围与免责声明
+
+本数据集用于：
+
+- 监管推理基准评测
+- 跨法域对齐研究
+- 误差分析与鲁棒性研究
+
+不用于：
+
+- 自动化合规决策
+- 无专家审查的法律或合规建议
+
+---
+
+## 📄 许可协议
 
 本数据集采用 CC BY 4.0 协议，详见 `LICENSE`。
 
-## 引用
+---
+
+## 📚 引用
 
 见 `CITATION.bib`。
